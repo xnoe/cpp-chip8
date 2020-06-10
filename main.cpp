@@ -12,6 +12,10 @@ int main(int argc, char** argv) {
   unsigned char* Vx = &ROM[0xEA0];
   unsigned short* I = (unsigned short*)ROM+0xEB0;
   unsigned short* PC = (unsigned short*)ROM+0xEB2;
+//  unsigned short I[1] = {0};
+//  unsigned short PC[1] = {0};
+//  unsigned char Vx[15] = {0};
+
 
   unsigned short INST;
 
@@ -46,7 +50,9 @@ int main(int argc, char** argv) {
         *PC = NNN-2;
         break;
       case (2):
-        stack.push(*PC);*PC = NNN;break;
+        stack.push(*PC);
+        *PC = NNN-2;
+        break;
       case (3):
         if (Vx[X]==NN)
           *PC+=2;
