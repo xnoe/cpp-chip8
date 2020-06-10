@@ -42,7 +42,7 @@ int main(int argc, char** argv) {
         }
       }
       case (1):
-        PC = NNN;
+        PC = NNN-2;
         break;
       case (2):
         stack.push(PC);PC = NNN;break;

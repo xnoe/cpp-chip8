@@ -4,10 +4,10 @@ STO message
 :Loop
 ADE 1
 PRNT
-ADI D
-LOAD0
+ADID
+LOAD 0
 SKE0 0
 JMP Loop
 HLT
 :message
-DS HELLO
+DSTR Hello, world! This is proof that this works!
