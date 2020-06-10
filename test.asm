@@ -1,0 +1,13 @@
+LDE 0
+LDD 1
+STO message
+:Loop
+ADE 1
+PRNT
+ADI D
+LOAD0
+SKE0 0
+JMP Loop
+HLT
+:message
+DS HELLO
