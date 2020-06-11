@@ -1,3 +1,4 @@
+ORG 512
 LDE 0
 LDD 1
 STO message

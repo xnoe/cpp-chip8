@@ -10,6 +10,8 @@ with open(sys.argv[1], 'r') as f:
 labels = {}
 instructions = []
 
+outb = []
+
 adj = 0
 for index in range(0, len(lines)):
   if lines[index] == "":
@@ -21,9 +23,12 @@ for index in range(0, len(lines)):
     labels[lines[index][1:]] = 2*(index)-adj
     adj += 2
   else:
-    instructions.append(lines[index])
-
-outb = []
+    if lines[index][:4] == "ORG ":
+      for i in range(0, int(lines[index][4:])):
+        outb.append(unhex("00"))
+      adj -= int(lines[index][4:]) - 2
+    else:
+      instructions.append(lines[index])
 
 def padl(s, l):
   return "0"*(l-len(s))+s
@@ -36,6 +41,7 @@ for x in instructions:
     outb.append(bytes(unhex(padl(y[1], 2))))
   elif opcode == "STO":
     if y[1] in labels:
+      print(hex(labels[y[1]]))
       t ="A"+padl(hex(labels[y[1]])[2:], 3)
       outb.append(bytes(unhex(t[:2]),))
       outb.append(bytes(unhex(t[2:]),))
