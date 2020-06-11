@@ -4,21 +4,21 @@
 
 int main(int argc, char** argv) {
   if (argc < 2) {
-    std::cout << "Please specify bytecode file!\n";
-    return 1;
+    std::cout << "CHIP-8-esque... thing?\n";
+    std::cout << "By bybb\n";
+    std::cout << "Usage:" << argv[1] << " <bytecode file>.\n";
+    return 0;
   }
 
   unsigned char ROM[0x1000] = {0};
   unsigned char* Vx = &ROM[0xEA0];
   unsigned short* I = (unsigned short*)ROM+0xEB0;
   unsigned short* PC = (unsigned short*)ROM+0xEB2;
-//  unsigned short I[1] = {0};
-//  unsigned short PC[1] = {0};
-//  unsigned char Vx[15] = {0};
-
+  *PC = 0x200; // Correctly set PC to 0x200
 
   unsigned short INST;
 
+  // Read in bytecode file
   std::ifstream romFile (argv[1]);
 
   int count(0);
