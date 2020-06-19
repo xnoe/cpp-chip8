@@ -10,28 +10,27 @@ with open(sys.argv[1], 'r') as f:
 labels = {}
 instructions = []
 
-outb = []
-
 adj = 0
+# I hate this with a passion
+# I've coded myself in a very nasty corner
+# AAAAAAAAAAAAAAAAAAAAAAAAAAA
 for index in range(0, len(lines)):
   if lines[index] == "":
     adj += 2
     continue
-  if lines[index][:4] == "DSTR":
-    adj += len(lines[index][5:])%2
   if lines[index][0] == ":":
     labels[lines[index][1:]] = 2*(index)-adj
     adj += 2
   else:
-    if lines[index][:4] == "ORG ":
-      for i in range(0, int(lines[index][4:])):
-        outb.append(unhex("00"))
-      adj -= int(lines[index][4:]) - 2
-    else:
-      instructions.append(lines[index])
+    instructions.append(lines[index])
 
 def padl(s, l):
   return "0"*(l-len(s))+s
+
+outb = []
+for i in range(0, 512):
+  outb.append(bytes(unhex('00')))
+adj = -510
 
 for x in instructions:
   y = x.split(' ')
@@ -41,8 +40,7 @@ for x in instructions:
     outb.append(bytes(unhex(padl(y[1], 2))))
   elif opcode == "STO":
     if y[1] in labels:
-      print(hex(labels[y[1]]))
-      t ="A"+padl(hex(labels[y[1]])[2:], 3)
+      t ="A"+padl(hex(labels[y[1]]-adj)[2:], 3)
       outb.append(bytes(unhex(t[:2]),))
       outb.append(bytes(unhex(t[2:]),))
     else:
@@ -73,7 +71,7 @@ for x in instructions:
       outb.append(bytes(unhex(padl(y[1], 2))))
   elif opcode == "JMP":
     if y[1] in labels:
-      t ="1"+padl(hex(labels[y[1]])[2:], 3)
+      t ="1"+padl(hex(labels[y[1]]-adj)[2:], 3)
       outb.append(bytes(unhex(t[:2]),))
       outb.append(bytes(unhex(t[2:]),))
     else:
@@ -84,7 +82,9 @@ for x in instructions:
     outb.append(bytes(unhex("00")))
     outb.append(bytes(unhex("00")))
   elif opcode == "DSTR":
-    for i in ' '.join(y[j] for j in range(1, len(y))):
+    towrite = ' '.join(y[j] for j in range(1, len(y)))
+    adj += len(towrite)-2
+    for i in towrite:
       outb.append(bytes(i, 'ascii'))
   elif opcode == "NOP":
     outb.append(bytes(unhex("00")))
@@ -94,7 +94,7 @@ for x in instructions:
     outb.append(bytes(unhex("EE")))
   elif opcode == "CAL":
     if y[1] in labels:
-      t ="2"+padl(hex(labels[y[1]])[2:], 3)
+      t ="2"+padl(hex(labels[y[1]]-adj)[2:], 3)
       outb.append(bytes(unhex(t[:2]),))
       outb.append(bytes(unhex(t[2:]),))
     else:
